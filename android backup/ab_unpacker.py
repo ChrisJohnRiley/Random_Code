@@ -15,17 +15,17 @@ import os
 
 def main():
 
-    	usage = "\n%prog [options] arguments"
+	usage = "\n%prog [options] arguments"
 	version = "v1.0 - @ChrisJohnRiley"
 	logo(version)
-    	
+
 	parser = optparse.OptionParser(usage=usage, version=version)
 
-    	parser.add_option("-p", "--package", dest="package", help="Android Package to backup")
+	parser.add_option("-p", "--package", dest="package", help="Android Package to backup")
 	parser.add_option("-b", "--backfile", dest="backfile", help="Backup destination filename")
 	parser.add_option("-l", "--list", dest="list", help="Create Tar List file for repacking", action="store_true")
 
-    	(opts, args) = parser.parse_args()
+	(opts, args) = parser.parse_args()
 
 	if opts.package and opts.backfile:
 		print("\n [ ] Starting script to backup %s to %s") % (opts.package, opts.backfile)
@@ -57,7 +57,7 @@ def logo(version):
         |_/_//_|        |_|   %s''') % version
 
 def setup(package, backfile):
-	
+
 	# setup variables for the script
 	adbbackup = 'adb backup ' + package + ' -f ' + backfile
 	unpackdir = package
@@ -91,7 +91,7 @@ def backup(adbbackup, backfile):
 	print(" [>] Accept backup prompt on Android device to continue...")
 	child = pexpect.spawn (adbbackup)
 	for line in child:
-	    print line
+		print line
 
 	# check if backup was created
 	child = pexpect.spawn ('ls ' + backfile)
@@ -133,17 +133,15 @@ def create_list(unpackdir):
 	print(" [ ] Creating filelist from TAR file (%s)") % (unpackdir + '.list')
 	child = pexpect.spawn ('/bin/bash -c "tar -tf ' + unpackdir + '.tar > ' + unpackdir + '.list"')
 
-
 def extract(unpackdir):
 
 	# extract tar to destination directory
 	child = pexpect.spawn ('tar -xvf' + unpackdir + '.tar -C' + unpackdir +'/')
 	print("\n [>] Expanding Android Backup (TAR) to ./%s\n") % unpackdir
 	for line in child:
-	    if not line.startswith("/bin/tar:"):
-		# print non-informational lines		
-		print(" [>] Creating: ./%s/%s") % (unpackdir, line),
-
+		if not line.startswith("/bin/tar:"):
+			# print non-informational lines		
+			print(" [>] Creating: ./%s/%s") % (unpackdir, line),
 
 if __name__ == "__main__":
    main()

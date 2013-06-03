@@ -17,19 +17,19 @@ import string
 
 def main():
 
-    	usage = "\n%prog [options] arguments"
+	usage = "\n%prog [options] arguments"
 	version = "v1.0 - @ChrisJohnRiley"
 	logo(version)
-    	
+
 	parser = optparse.OptionParser(usage=usage, version=version)
 
-    	parser.add_option("-d", "--directory", dest="directory", help="Directory containing apps folder for repacking")
+	parser.add_option("-d", "--directory", dest="directory", help="Directory containing apps folder for repacking")
 	parser.add_option("-b", "--backfile", dest="backfile", help="Resulting Android Backup filename")
 	parser.add_option("-l", "--list", dest="list", help="List created from original backup")
 	parser.add_option("-o", "--original", dest="original", help="Original Android Backup filename")
 	parser.add_option("-r", "--restore", dest="restore", help="Restore to device on completion", action="store_true")
 
-    	(opts, args) = parser.parse_args()
+	(opts, args) = parser.parse_args()
 
 	if opts.directory and opts.backfile:
 		if not opts.original:
@@ -119,7 +119,6 @@ def restore(adbrestore):
 	for line in child:
 		print line,
 
-
 def decode(original):
 
 	# decode Android Backup using dd and openssl zlib
@@ -171,7 +170,6 @@ def pack(directory, backfile, listfile, original):
 	if i==1:
 		print(" [X] Unable to compress Android Backup file (%s)") % backfile
 		sys.exit(1)
-
 
 	# cleanup temp file
 	os.remove(randfilename + '.tar')
