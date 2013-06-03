@@ -98,7 +98,7 @@ def backup(adbbackup, backfile):
 	i = child.expect (backfile)
 
 	if i==0:
-		if os.stat(backfile).st_size==0:
+		if os.stat(backfile).st_size < 42:
 			print(" [X] Resulting Android Backup file is empty - check application name")
 			sys.exit(1)	
 		else:
