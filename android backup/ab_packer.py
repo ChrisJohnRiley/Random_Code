@@ -65,6 +65,9 @@ def main():
 
 	pack()
 
+	if opts.verbose:
+		# output summary of extracted files
+		summary()
 	if opts.restore:
 		restore()
 
@@ -184,6 +187,12 @@ def pack():
 
 	# cleanup temp file
 	os.remove(opts.randfilename + '.tar')
+
+def summary():
+	child = pexpect.spawn ('tree -a -x ' + opts.directory)
+	print("\n [ ] Summary of packed contents (%s):\n") % opts.directory
+	for line in child:
+		print '\t' + line,
 
 if __name__ == "__main__":
    main()

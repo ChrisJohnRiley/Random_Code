@@ -171,7 +171,7 @@ def extract():
 
 def summary():
 	child = pexpect.spawn ('tree -a -x ' + opts.unpackdir)
-	print("\n [ ] Summary of extracted content:\n")
+	print("\n [ ] Summary of extracted contents (%s):\n") % opts.unpackdir
 	for line in child:
 		print '\t' + line,
 
