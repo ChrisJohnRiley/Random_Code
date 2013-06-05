@@ -17,7 +17,7 @@ import errno
 def main():
 
 	usage = "\n%prog [options] arguments"
-	version = "v1.0 - @ChrisJohnRiley"
+	version = "v1.1 - @ChrisJohnRiley"
 	logo(version)
 
 	parser = optparse.OptionParser(usage=usage, version=version)
@@ -108,12 +108,12 @@ def backup():
 	# backup application over adb
 	print(" [ ] Running Android Backup: %s") % opts.adbbackup
 
-	print(" [>] Accept backup prompt on Android device to continue...")
+	print(" [>] Accept backup prompt on Android device to continue...\n")
 	child = pexpect.spawn (opts.adbbackup)
 	# check if adb errored out - can't use expect due to stderr?
 	for line in child:
 		if "unable to connect for backup" in line:
-			print(" [X] ADB is unable to detect an Android device\n")
+			print(" [X] ADB is unable to detect an Android device - cancelling backup\n")
 			sys.exit(1)
 		else:
 			print line,
@@ -142,27 +142,27 @@ def decode():
 		os.mkdir(opts.unpackdir)
 
 	# convert ab to tar
-	child = pexpect.spawn ('/bin/bash -c "dd if=' + opts.backfile + ' bs=24 skip=1 | openssl zlib -d > ' + opts.unpackdir + '.tar"')
+	child = pexpect.spawn ('/bin/bash -c "dd if=' + opts.backfile + ' bs=24 skip=1 | openssl zlib -d > ' + opts.backfile + '.tar"')
 	i = child.expect('records out')
 
 	if i==1:
 		print(" [X] Unable to decompress Android Backup file (%s)") % opts.backfile
 		sys.exit(1)
 
-	if not os.path.exists(opts.unpackdir + '.tar'):
-		print(" [X] Unable to create TAR file (%s)") % (opts.unpackdir + '.tar')
+	if not os.path.exists(opts.backfile + '.tar'):
+		print(" [X] Unable to create TAR file (%s)") % (opts.backfile + '.tar')
 		sys.exit(1)
 
 def create_list():
 
 	# create list from TAR file (for use in repacking)
-	print(" [ ] Creating filelist from TAR file (%s)") % (opts.unpackdir + '.list')
-	child = pexpect.spawn ('/bin/bash -c "tar -tf ' + opts.unpackdir + '.tar > ' + opts.unpackdir + '.list"')
+	print(" [ ] Creating filelist from TAR file (%s)") % (opts.backfile + '.tar.list')
+	child = pexpect.spawn ('/bin/bash -c "tar -tf ' + opts.backfile + '.tar > ' + opts.backfile + '.tar.list"')
 
 def extract():
 
 	# extract tar to destination directory
-	child = pexpect.spawn ('tar -xvf' + opts.unpackdir + '.tar -C' + opts.unpackdir +'/')
+	child = pexpect.spawn ('tar -xvf' + opts.backfile + '.tar -C' + opts.unpackdir +'/')
 	print("\n [>] Expanding Android Backup (TAR) to ./%s\n") % opts.unpackdir
 	for line in child:
 		if opts.verbose and not line.startswith("/bin/tar:"):
