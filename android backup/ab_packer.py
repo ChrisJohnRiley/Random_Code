@@ -66,7 +66,7 @@ def main():
 	pack()
 
 	if opts.verbose:
-		# output summary of extracted files
+		# output summary of packed files
 		summary()
 	if opts.restore:
 		restore()

@@ -28,7 +28,7 @@ def main():
 	parser.add_option("-l", "--list", dest="list", help="Create Tar List file for repacking", action="store_true")
 	parser.add_option("-a", "--apk", dest="apk", help="Include APK in backup", action="store_true")
 	parser.add_option("-v", "--verbose", dest="verbose", help="Verbose output", action="store_true")
-	parser.add_option("-o", "--overwrite", dest="overwrite", help="Overwrite files/directories", action="store_true")
+	parser.add_option("-x", "--overwrite", dest="overwrite", help="Overwrite files/directories", action="store_true")
 
 	global opts
 	(opts, args) = parser.parse_args()
