@@ -13,16 +13,18 @@ import optparse
 import sys
 import os
 import errno
+from time import sleep
 
 def main():
 
 	usage = "\n%prog [options] arguments"
-	version = "v1.1 - @ChrisJohnRiley"
+	version = "v1.3 - @ChrisJohnRiley"
 	logo(version)
 
 	parser = optparse.OptionParser(usage=usage, version=version)
 
 	parser.add_option("-p", "--package", dest="package", help="Android Package to backup")
+	parser.add_option("-f", "--file", dest="file", help="Unpack existing AB file")
 	parser.add_option("-b", "--backfile", dest="backfile", help="Backup destination filename")
 	parser.add_option("-u", "--unpackdir", dest="unpackdir", help="Optional: Unpack destination")
 	parser.add_option("-l", "--list", dest="list", help="Create Tar List file for repacking", action="store_true")
@@ -36,6 +38,10 @@ def main():
 
 	if opts.package and opts.backfile:
 		print("\n [ ] Starting script to backup %s to %s") % (opts.package, opts.backfile)
+	elif opts.file:
+		print("\n [ ] Using existing .ab file %s") % opts.file
+		opts.backfile = opts.file
+		opts.package = opts.file.split(".")[0]
 	else:
 		print("\n [X] Required arguements [package] and [backfile] not provided\n")
 		parser.print_help()
@@ -49,7 +55,8 @@ def main():
 
 	setup()
 	checks()
-	backup()
+	if not opts.file:
+		backup()
 	decode()
 	if opts.list:
 		create_list()
@@ -87,7 +94,7 @@ def checks():
 	if not opts.overwrite:
 
 		# check if file and/or directory exist already
-		if os.path.exists(opts.backfile):
+		if os.path.exists(opts.backfile) and not opts.file:
 			print(" [X] Target of backup: %s already exists\n") % opts.backfile
 			sys.exit(1)
 	
@@ -105,11 +112,9 @@ def checks():
 
 def backup():
 
-	# backup application over adb
-	print(" [ ] Running Android Backup: %s") % opts.adbbackup
-
 	print(" [>] Accept backup prompt on Android device to continue...\n")
-	child = pexpect.spawn (opts.adbbackup)
+	child = pexpect.spawn(opts.adbbackup)
+
 	# check if adb errored out - can't use expect due to stderr?
 	for line in child:
 		if "unable to connect for backup" in line:
@@ -133,6 +138,9 @@ def backup():
 		sys.exit(1)
 
 def decode():
+
+	# check if opts.file set, if so use it
+	if opts.file: opts.backfile = opts.file
 
 	# decode Android Backup using dd and openssl zlib
 	print(" [ ] Creating directory %s and unpacking Android Backup (%s)") % (opts.unpackdir, opts.backfile)
@@ -177,4 +185,5 @@ def summary():
 
 if __name__ == "__main__":
    main()
+
 
